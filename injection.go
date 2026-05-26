@@ -11,27 +11,18 @@ type injection struct {
 type injectionMarker int
 
 // newInjection creates a new injection.
-func newInjection() *injection {
-	return &injection{
-		markerSQLs: map[injectionMarker][]string{},
-	}
-}
+func newInjection() *injection { _ = "STUB: not implemented"; return nil }
 
 // SQL adds sql to injection's sql list.
 // All sqls inside injection is ordered by marker in ascending order.
 func (injection *injection) SQL(marker injectionMarker, sql string) {
-	injection.markerSQLs[marker] = append(injection.markerSQLs[marker], sql)
+	_ = "STUB: not implemented"
+	return
 }
 
 // WriteTo joins all SQL strings at the same marker value with blank (" ")
 // and writes the joined value to buf.
 func (injection *injection) WriteTo(buf *stringBuilder, marker injectionMarker) {
-	sqls := injection.markerSQLs[marker]
-
-	if len(sqls) == 0 {
-		return
-	}
-
-	buf.WriteLeadingString("")
-	buf.WriteStrings(sqls, " ")
+	_ = "STUB: not implemented"
+	return
 }

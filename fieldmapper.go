@@ -2,8 +2,6 @@ package sqlbuilder
 
 import (
 	"reflect"
-
-	"github.com/huandu/xstrings"
 )
 
 var (
@@ -38,9 +36,7 @@ type FieldMapperFunc func(name string) string
 //
 // SnakeCaseMapper uses package "xstrings" to do the conversion.
 // See https://pkg.go.dev/github.com/huandu/xstrings#ToSnakeCase for conversion rules.
-func SnakeCaseMapper(field string) string {
-	return xstrings.ToSnakeCase(field)
-}
+func SnakeCaseMapper(field string) string { _ = "STUB: not implemented"; return "" }
 
 // GetAliasFunc is a func to get alias and dbtag
 type GetAliasFunc func(field *reflect.StructField) (alias string, dbtag string)

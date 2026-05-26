@@ -4,7 +4,6 @@
 package sqlbuilder
 
 import (
-	"fmt"
 	"reflect"
 
 	"github.com/huandu/go-clone"
@@ -23,22 +22,13 @@ const (
 )
 
 // NewUnionBuilder creates a new UNION builder.
-func NewUnionBuilder() *UnionBuilder {
-	return DefaultFlavor.NewUnionBuilder()
-}
+func NewUnionBuilder() *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
-func newUnionBuilder() *UnionBuilder {
-	return &UnionBuilder{
-		args:      &Args{},
-		injection: newInjection(),
-	}
-}
+func newUnionBuilder() *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
 // Clone returns a deep copy of UnionBuilder.
 // It's useful when you want to create a base builder and clone it to build similar queries.
-func (ub *UnionBuilder) Clone() *UnionBuilder {
-	return clone.Clone(ub).(*UnionBuilder)
-}
+func (ub *UnionBuilder) Clone() *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
 func init() {
 	t := reflect.TypeOf(UnionBuilder{})
@@ -73,59 +63,40 @@ type UnionBuilder struct {
 var _ Builder = new(UnionBuilder)
 
 // Union unions all builders together using UNION operator.
-func Union(builders ...Builder) *UnionBuilder {
-	return DefaultFlavor.NewUnionBuilder().Union(builders...)
-}
+func Union(builders ...Builder) *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
 // Union unions all builders together using UNION operator.
 func (ub *UnionBuilder) Union(builders ...Builder) *UnionBuilder {
-	return ub.union(unionDistinct, builders...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // UnionAll unions all builders together using UNION ALL operator.
-func UnionAll(builders ...Builder) *UnionBuilder {
-	return DefaultFlavor.NewUnionBuilder().UnionAll(builders...)
-}
+func UnionAll(builders ...Builder) *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
 // UnionAll unions all builders together using UNION ALL operator.
 func (ub *UnionBuilder) UnionAll(builders ...Builder) *UnionBuilder {
-	return ub.union(unionAll, builders...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (ub *UnionBuilder) union(opt string, builders ...Builder) *UnionBuilder {
-	builderVars := make([]string, 0, len(builders))
-
-	for _, b := range builders {
-		builderVars = append(builderVars, ub.Var(b))
-	}
-
-	ub.opt = opt
-	ub.builders = append([]Builder(nil), builders...)
-	ub.builderVars = builderVars
-	ub.marker = unionMarkerAfterUnion
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // OrderBy sets columns of ORDER BY in SELECT.
 //
 // It's recommended to use OrderByAsc or OrderByDesc instead for better support of multiple ORDER BY columns with different directions.
 // OrderBy combined with Asc/Desc only supports a single direction for all columns.
-func (ub *UnionBuilder) OrderBy(col ...string) *UnionBuilder {
-	ub.orderByCols = col
-	ub.marker = unionMarkerAfterOrderBy
-	return ub
-}
+func (ub *UnionBuilder) OrderBy(col ...string) *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
 // OrderByAsc sets a column of ORDER BY in SELECT with ASC order.
 // It supports chaining multiple calls to add multiple ORDER BY columns with different directions.
 //
 //	ub.OrderByAsc("name").OrderByDesc("id")
 //	// Generates: ORDER BY name ASC, id DESC
-func (ub *UnionBuilder) OrderByAsc(col string) *UnionBuilder {
-	ub.orderByCols = append(ub.orderByCols, col+" ASC")
-	ub.marker = unionMarkerAfterOrderBy
-	return ub
-}
+func (ub *UnionBuilder) OrderByAsc(col string) *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
 // OrderByDesc sets a column of ORDER BY in SELECT with DESC order.
 // It supports chaining multiple calls to add multiple ORDER BY columns with different directions.
@@ -133,259 +104,74 @@ func (ub *UnionBuilder) OrderByAsc(col string) *UnionBuilder {
 //	ub.OrderByDesc("id").OrderByAsc("name")
 //	// Generates: ORDER BY id DESC, name ASC
 func (ub *UnionBuilder) OrderByDesc(col string) *UnionBuilder {
-	ub.orderByCols = append(ub.orderByCols, col+" DESC")
-	ub.marker = unionMarkerAfterOrderBy
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Asc sets order of ORDER BY to ASC.
 //
 // Deprecated: Use OrderByAsc instead. Asc only supports a single direction for all ORDER BY columns.
-func (ub *UnionBuilder) Asc() *UnionBuilder {
-	ub.order = "ASC"
-	ub.marker = unionMarkerAfterOrderBy
-	return ub
-}
+func (ub *UnionBuilder) Asc() *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
 // Desc sets order of ORDER BY to DESC.
 //
 // Deprecated: Use OrderByDesc instead. Desc only supports a single direction for all ORDER BY columns.
-func (ub *UnionBuilder) Desc() *UnionBuilder {
-	ub.order = "DESC"
-	ub.marker = unionMarkerAfterOrderBy
-	return ub
-}
+func (ub *UnionBuilder) Desc() *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
 // Limit sets the LIMIT in SELECT.
-func (ub *UnionBuilder) Limit(limit int) *UnionBuilder {
-	if limit < 0 {
-		ub.limitVar = ""
-		return ub
-	}
-
-	ub.limitVar = ub.Var(limit)
-	ub.marker = unionMarkerAfterLimit
-	return ub
-}
+func (ub *UnionBuilder) Limit(limit int) *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
 // Offset sets the LIMIT offset in SELECT.
-func (ub *UnionBuilder) Offset(offset int) *UnionBuilder {
-	if offset < 0 {
-		ub.offsetVar = ""
-		return ub
-	}
-
-	ub.offsetVar = ub.Var(offset)
-	ub.marker = unionMarkerAfterLimit
-	return ub
-}
+func (ub *UnionBuilder) Offset(offset int) *UnionBuilder { _ = "STUB: not implemented"; return nil }
 
 // String returns the compiled SELECT string.
-func (ub *UnionBuilder) String() string {
-	s, _ := ub.Build()
-	return s
-}
+func (ub *UnionBuilder) String() string { _ = "STUB: not implemented"; return "" }
 
 // Build returns compiled SELECT string and args.
 // They can be used in `DB#Query` of package `database/sql` directly.
 func (ub *UnionBuilder) Build() (sql string, args []interface{}) {
-	return ub.BuildWithFlavor(ub.args.Flavor)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // BuildWithFlavor returns compiled SELECT string and args with flavor and initial args.
 // They can be used in `DB#Query` of package `database/sql` directly.
 func (ub *UnionBuilder) BuildWithFlavor(flavor Flavor, initialArg ...interface{}) (sql string, args []interface{}) {
-	buf := newStringBuilder()
-	ub.injection.WriteTo(buf, unionMarkerInit)
-
-	nestedSelect := (flavor == Oracle && (len(ub.limitVar) > 0 || len(ub.offsetVar) > 0)) ||
-		(flavor == Informix && len(ub.limitVar) > 0)
-
-	if len(ub.builderVars) > 0 {
-		needParen := flavor != SQLite
-
-		if nestedSelect {
-			buf.WriteLeadingString("SELECT * FROM (")
-		}
-
-		if needParen {
-			buf.WriteLeadingString("(")
-			buf.WriteString(ub.builderVars[0])
-			buf.WriteRune(')')
-		} else {
-			buf.WriteLeadingString(ub.builderVars[0])
-		}
-
-		for _, b := range ub.builderVars[1:] {
-			buf.WriteString(ub.opt)
-
-			if needParen {
-				buf.WriteRune('(')
-			}
-
-			buf.WriteString(b)
-
-			if needParen {
-				buf.WriteRune(')')
-			}
-		}
-
-		if nestedSelect {
-			buf.WriteLeadingString(")")
-		}
-	}
-
-	ub.injection.WriteTo(buf, unionMarkerAfterUnion)
-
-	if len(ub.orderByCols) > 0 {
-		buf.WriteLeadingString("ORDER BY ")
-		buf.WriteStrings(ub.orderByCols, ", ")
-
-		if ub.order != "" {
-			buf.WriteRune(' ')
-			buf.WriteString(ub.order)
-		}
-
-		ub.injection.WriteTo(buf, unionMarkerAfterOrderBy)
-	}
-
-	switch flavor {
-	case MySQL, SQLite, ClickHouse:
-		if len(ub.limitVar) > 0 {
-			buf.WriteLeadingString("LIMIT ")
-			buf.WriteString(ub.limitVar)
-
-			if len(ub.offsetVar) > 0 {
-				buf.WriteLeadingString("OFFSET ")
-				buf.WriteString(ub.offsetVar)
-			}
-		}
-
-	case CQL:
-		if len(ub.limitVar) > 0 {
-			buf.WriteLeadingString("LIMIT ")
-			buf.WriteString(ub.limitVar)
-		}
-
-	case PostgreSQL:
-		if len(ub.limitVar) > 0 {
-			buf.WriteLeadingString("LIMIT ")
-			buf.WriteString(ub.limitVar)
-		}
-
-		if len(ub.offsetVar) > 0 {
-			buf.WriteLeadingString("OFFSET ")
-			buf.WriteString(ub.offsetVar)
-		}
-
-	case Presto:
-		// There might be a hidden constraint in Presto requiring offset to be set before limit.
-		// The select statement documentation (https://prestodb.io/docs/current/sql/select.html)
-		// puts offset before limit, and Trino, which is based on Presto, seems
-		// to require this specific order.
-		if len(ub.offsetVar) > 0 {
-			buf.WriteLeadingString("OFFSET ")
-			buf.WriteString(ub.offsetVar)
-		}
-
-		if len(ub.limitVar) > 0 {
-			buf.WriteLeadingString("LIMIT ")
-			buf.WriteString(ub.limitVar)
-		}
-
-	case SQLServer:
-		// If ORDER BY is not set, sort column #1 by default.
-		// It's required to make OFFSET...FETCH work.
-		if len(ub.orderByCols) == 0 && (len(ub.limitVar) > 0 || len(ub.offsetVar) > 0) {
-			buf.WriteLeadingString("ORDER BY 1")
-		}
-
-		if len(ub.offsetVar) > 0 {
-			buf.WriteLeadingString("OFFSET ")
-			buf.WriteString(ub.offsetVar)
-			buf.WriteString(" ROWS")
-		}
-
-		if len(ub.limitVar) > 0 {
-			if len(ub.offsetVar) == 0 {
-				buf.WriteLeadingString("OFFSET 0 ROWS")
-			}
-
-			buf.WriteLeadingString("FETCH NEXT ")
-			buf.WriteString(ub.limitVar)
-			buf.WriteString(" ROWS ONLY")
-		}
-
-	case Oracle:
-		// It's required to make OFFSET...FETCH work.
-		if len(ub.offsetVar) > 0 {
-			buf.WriteLeadingString("OFFSET ")
-			buf.WriteString(ub.offsetVar)
-			buf.WriteString(" ROWS")
-		}
-
-		if len(ub.limitVar) > 0 {
-			if len(ub.offsetVar) == 0 {
-				buf.WriteLeadingString("OFFSET 0 ROWS")
-			}
-
-			buf.WriteLeadingString("FETCH NEXT ")
-			buf.WriteString(ub.limitVar)
-			buf.WriteString(" ROWS ONLY")
-		}
-
-	case Informix:
-		// [SKIP N] FIRST M
-		// M must be greater than 0
-		if len(ub.limitVar) > 0 {
-			if len(ub.offsetVar) > 0 {
-				buf.WriteLeadingString("SKIP ")
-				buf.WriteString(ub.offsetVar)
-			}
-
-			buf.WriteLeadingString("FIRST ")
-			buf.WriteString(ub.limitVar)
-		}
-
-	case Doris:
-		// #192: Doris doesn't support ? in OFFSET and LIMIT.
-		if len(ub.limitVar) > 0 {
-			buf.WriteLeadingString("LIMIT ")
-			buf.WriteString(fmt.Sprint(ub.args.Value(ub.limitVar)))
-
-			if len(ub.offsetVar) > 0 {
-				buf.WriteLeadingString("OFFSET ")
-				buf.WriteString(fmt.Sprint(ub.args.Value(ub.offsetVar)))
-			}
-		}
-	}
-
-	if len(ub.limitVar) > 0 {
-		ub.injection.WriteTo(buf, unionMarkerAfterLimit)
-	}
-
-	return ub.args.CompileWithFlavor(buf.String(), flavor, initialArg...)
+	_ = "STUB: not implemented"
+	return "", nil
 }
+
+// There might be a hidden constraint in Presto requiring offset to be set before limit.
+// The select statement documentation (https://prestodb.io/docs/current/sql/select.html)
+// puts offset before limit, and Trino, which is based on Presto, seems
+// to require this specific order.
+
+// If ORDER BY is not set, sort column #1 by default.
+// It's required to make OFFSET...FETCH work.
+
+// It's required to make OFFSET...FETCH work.
+
+// [SKIP N] FIRST M
+// M must be greater than 0
+
+// #192: Doris doesn't support ? in OFFSET and LIMIT.
 
 // SetFlavor sets the flavor of compiled sql.
 func (ub *UnionBuilder) SetFlavor(flavor Flavor) (old Flavor) {
-	old = ub.args.Flavor
-	ub.args.Flavor = flavor
-	return
+	_ = "STUB: not implemented"
+	return *new(Flavor)
 }
 
 // Flavor returns flavor of builder
 func (ub *UnionBuilder) Flavor() Flavor {
-	return ub.args.Flavor
+	_ = "STUB: not implemented"
+	return *
+
+	// Var returns a placeholder for value.
+	new(Flavor)
 }
 
-// Var returns a placeholder for value.
-func (ub *UnionBuilder) Var(arg interface{}) string {
-	return ub.args.Add(arg)
-}
+func (ub *UnionBuilder) Var(arg interface{}) string { _ = "STUB: not implemented"; return "" }
 
 // SQL adds an arbitrary sql to current position.
-func (ub *UnionBuilder) SQL(sql string) *UnionBuilder {
-	ub.injection.SQL(ub.marker, sql)
-	return ub
-}
+func (ub *UnionBuilder) SQL(sql string) *UnionBuilder { _ = "STUB: not implemented"; return nil }

@@ -5,67 +5,22 @@ package sqlbuilder
 
 import (
 	"reflect"
-	"strings"
 )
 
 // Escape replaces `$` with `$$` in ident.
-func Escape(ident string) string {
-	return strings.Replace(ident, "$", "$$", -1)
-}
+func Escape(ident string) string { _ = "STUB: not implemented"; return "" }
 
 // EscapeAll replaces `$` with `$$` in all strings of ident.
-func EscapeAll(ident ...string) []string {
-	escaped := make([]string, 0, len(ident))
-
-	for _, i := range ident {
-		escaped = append(escaped, Escape(i))
-	}
-
-	return escaped
-}
+func EscapeAll(ident ...string) []string { _ = "STUB: not implemented"; return nil }
 
 // Flatten recursively extracts values in slices and returns
 // a flattened []interface{} with all values.
 // If slices is not a slice, return `[]interface{}{slices}`.
-func Flatten(slices interface{}) (flattened []interface{}) {
-	v := reflect.ValueOf(slices)
-	slices, flattened = flatten(v)
-
-	if slices != nil {
-		return []interface{}{slices}
-	}
-
-	return flattened
-}
+func Flatten(slices interface{}) (flattened []interface{}) { _ = "STUB: not implemented"; return nil }
 
 func flatten(v reflect.Value) (elem interface{}, flattened []interface{}) {
-	k := v.Kind()
-
-	for k == reflect.Interface {
-		v = v.Elem()
-		k = v.Kind()
-	}
-
-	if k != reflect.Slice && k != reflect.Array {
-		if !v.IsValid() || !v.CanInterface() {
-			return
-		}
-
-		elem = v.Interface()
-		return elem, nil
-	}
-
-	for i, l := 0, v.Len(); i < l; i++ {
-		e, f := flatten(v.Index(i))
-
-		if e == nil {
-			flattened = append(flattened, f...)
-		} else {
-			flattened = append(flattened, e)
-		}
-	}
-
-	return
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type rawArgs struct {
@@ -73,9 +28,7 @@ type rawArgs struct {
 }
 
 // Raw marks the expr as a raw value which will not be added to args.
-func Raw(expr string) interface{} {
-	return rawArgs{expr}
-}
+func Raw(expr string) interface{} { _ = "STUB: not implemented"; return nil }
 
 type listArgs struct {
 	args    []interface{}
@@ -84,30 +37,14 @@ type listArgs struct {
 
 // List marks arg as a list of data.
 // If arg is `[]int{1, 2, 3}`, it will be compiled to `?, ?, ?` with args `[1 2 3]`.
-func List(arg interface{}) interface{} {
-	return listArgs{
-		args: Flatten(arg),
-	}
-}
+func List(arg interface{}) interface{} { _ = "STUB: not implemented"; return nil }
 
 // Tuple wraps values into a tuple and can be used as a single value.
-func Tuple(values ...interface{}) interface{} {
-	return listArgs{
-		args:    values,
-		isTuple: true,
-	}
-}
+func Tuple(values ...interface{}) interface{} { _ = "STUB: not implemented"; return nil }
 
 // TupleNames joins names with tuple format.
 // The names is not escaped. Use `EscapeAll` to escape them if necessary.
-func TupleNames(names ...string) string {
-	buf := newStringBuilder()
-	buf.WriteRune('(')
-	buf.WriteStrings(names, ", ")
-	buf.WriteRune(')')
-
-	return buf.String()
-}
+func TupleNames(names ...string) string { _ = "STUB: not implemented"; return "" }
 
 type namedArgs struct {
 	name string
@@ -117,9 +54,4 @@ type namedArgs struct {
 // Named creates a named argument.
 // Unlike `sql.Named`, this named argument works only with `Build` or `BuildNamed` for convenience
 // and will be replaced to a `?` after `Compile`.
-func Named(name string, arg interface{}) interface{} {
-	return namedArgs{
-		name: name,
-		arg:  arg,
-	}
-}
+func Named(name string, arg interface{}) interface{} { _ = "STUB: not implemented"; return nil }

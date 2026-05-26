@@ -4,7 +4,6 @@
 package sqlbuilder
 
 import (
-	"fmt"
 	"reflect"
 
 	"github.com/huandu/go-clone"
@@ -23,30 +22,13 @@ const (
 )
 
 // NewUpdateBuilder creates a new UPDATE builder.
-func NewUpdateBuilder() *UpdateBuilder {
-	return DefaultFlavor.NewUpdateBuilder()
-}
+func NewUpdateBuilder() *UpdateBuilder { _ = "STUB: not implemented"; return nil }
 
-func newUpdateBuilder() *UpdateBuilder {
-	args := &Args{}
-	proxy := &whereClauseProxy{}
-	return &UpdateBuilder{
-		whereClauseProxy: proxy,
-		whereClauseExpr:  args.Add(proxy),
-
-		Cond: Cond{
-			Args: args,
-		},
-		args:      args,
-		injection: newInjection(),
-	}
-}
+func newUpdateBuilder() *UpdateBuilder { _ = "STUB: not implemented"; return nil }
 
 // Clone returns a deep copy of UpdateBuilder.
 // It's useful when you want to create a base builder and clone it to build similar queries.
-func (ub *UpdateBuilder) Clone() *UpdateBuilder {
-	return clone.Clone(ub).(*UpdateBuilder)
-}
+func (ub *UpdateBuilder) Clone() *UpdateBuilder { _ = "STUB: not implemented"; return nil }
 
 func init() {
 	t := reflect.TypeOf(UpdateBuilder{})
@@ -88,65 +70,39 @@ type UpdateBuilder struct {
 var _ Builder = new(UpdateBuilder)
 
 // Update sets table name in UPDATE.
-func Update(table ...string) *UpdateBuilder {
-	return DefaultFlavor.NewUpdateBuilder().Update(table...)
-}
+func Update(table ...string) *UpdateBuilder { _ = "STUB: not implemented"; return nil }
 
 // With sets WITH clause (the Common Table Expression) before UPDATE.
 func (ub *UpdateBuilder) With(builder *CTEBuilder) *UpdateBuilder {
-	ub.marker = updateMarkerAfterWith
-	ub.cteBuilderVar = ub.Var(builder)
-	ub.cteBuilder = builder
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Update sets table name in UPDATE.
 func (ub *UpdateBuilder) Update(table ...string) *UpdateBuilder {
-	ub.tables = table
-	ub.marker = updateMarkerAfterUpdate
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // TableNames returns all table names in this UPDATE statement.
-func (ub *UpdateBuilder) TableNames() (tableNames []string) {
-	var additionalTableNames []string
-
-	if ub.cteBuilder != nil {
-		additionalTableNames = ub.cteBuilder.tableNamesForFrom()
-	}
-
-	if len(ub.tables) > 0 && len(additionalTableNames) > 0 {
-		tableNames = make([]string, len(ub.tables)+len(additionalTableNames))
-		copy(tableNames, ub.tables)
-		copy(tableNames[len(ub.tables):], additionalTableNames)
-	} else if len(ub.tables) > 0 {
-		tableNames = ub.tables
-	} else if len(additionalTableNames) > 0 {
-		tableNames = additionalTableNames
-	}
-
-	return tableNames
-}
+func (ub *UpdateBuilder) TableNames() (tableNames []string) { _ = "STUB: not implemented"; return nil }
 
 // Set sets the assignments in SET.
 func (ub *UpdateBuilder) Set(assignment ...string) *UpdateBuilder {
-	ub.assignments = assignment
-	ub.marker = updateMarkerAfterSet
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // SetMore appends the assignments in SET.
 func (ub *UpdateBuilder) SetMore(assignment ...string) *UpdateBuilder {
-	ub.assignments = append(ub.assignments, assignment...)
-	ub.marker = updateMarkerAfterSet
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // From sets table names of FROM in UPDATE.
 func (ub *UpdateBuilder) From(table ...string) *UpdateBuilder {
-	ub.fromTables = table
-	ub.marker = updateMarkerAfterFrom
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Where adds expressions to the WHERE clause in UPDATE.
@@ -154,68 +110,50 @@ func (ub *UpdateBuilder) From(table ...string) *UpdateBuilder {
 // Multiple calls to Where will join expressions with AND.
 // To reset the WHERE clause, set the WhereClause field to nil.
 func (ub *UpdateBuilder) Where(andExpr ...string) *UpdateBuilder {
-	if len(andExpr) == 0 || estimateStringsBytes(andExpr) == 0 {
-		return ub
-	}
-
-	if ub.WhereClause == nil {
-		ub.WhereClause = NewWhereClause()
-	}
-
-	ub.WhereClause.AddWhereExpr(ub.args, andExpr...)
-	ub.marker = updateMarkerAfterWhere
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // AddWhereClause adds all clauses in the whereClause to SELECT.
 func (ub *UpdateBuilder) AddWhereClause(whereClause *WhereClause) *UpdateBuilder {
-	if ub.WhereClause == nil {
-		ub.WhereClause = NewWhereClause()
-	}
-
-	ub.WhereClause.AddWhereClause(whereClause)
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Assign represents SET "field = value" in UPDATE.
 func (ub *UpdateBuilder) Assign(field string, value interface{}) string {
-	return fmt.Sprintf("%s = %s", Escape(field), ub.args.Add(value))
+	_ = "STUB: not implemented"
+	return ""
 }
 
 // Incr represents SET "field = field + 1" in UPDATE.
-func (ub *UpdateBuilder) Incr(field string) string {
-	f := Escape(field)
-	return fmt.Sprintf("%s = %s + 1", f, f)
-}
+func (ub *UpdateBuilder) Incr(field string) string { _ = "STUB: not implemented"; return "" }
 
 // Decr represents SET "field = field - 1" in UPDATE.
-func (ub *UpdateBuilder) Decr(field string) string {
-	f := Escape(field)
-	return fmt.Sprintf("%s = %s - 1", f, f)
-}
+func (ub *UpdateBuilder) Decr(field string) string { _ = "STUB: not implemented"; return "" }
 
 // Add represents SET "field = field + value" in UPDATE.
 func (ub *UpdateBuilder) Add(field string, value interface{}) string {
-	f := Escape(field)
-	return fmt.Sprintf("%s = %s + %s", f, f, ub.args.Add(value))
+	_ = "STUB: not implemented"
+	return ""
 }
 
 // Sub represents SET "field = field - value" in UPDATE.
 func (ub *UpdateBuilder) Sub(field string, value interface{}) string {
-	f := Escape(field)
-	return fmt.Sprintf("%s = %s - %s", f, f, ub.args.Add(value))
+	_ = "STUB: not implemented"
+	return ""
 }
 
 // Mul represents SET "field = field * value" in UPDATE.
 func (ub *UpdateBuilder) Mul(field string, value interface{}) string {
-	f := Escape(field)
-	return fmt.Sprintf("%s = %s * %s", f, f, ub.args.Add(value))
+	_ = "STUB: not implemented"
+	return ""
 }
 
 // Div represents SET "field = field / value" in UPDATE.
 func (ub *UpdateBuilder) Div(field string, value interface{}) string {
-	f := Escape(field)
-	return fmt.Sprintf("%s = %s / %s", f, f, ub.args.Add(value))
+	_ = "STUB: not implemented"
+	return ""
 }
 
 // OrderBy sets columns of ORDER BY in UPDATE.
@@ -223,9 +161,8 @@ func (ub *UpdateBuilder) Div(field string, value interface{}) string {
 // It's recommended to use OrderByAsc or OrderByDesc instead for better support of multiple ORDER BY columns with different directions.
 // OrderBy combined with Asc/Desc only supports a single direction for all columns.
 func (ub *UpdateBuilder) OrderBy(col ...string) *UpdateBuilder {
-	ub.orderByCols = col
-	ub.marker = updateMarkerAfterOrderBy
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // OrderByAsc sets a column of ORDER BY in UPDATE with ASC order.
@@ -234,9 +171,8 @@ func (ub *UpdateBuilder) OrderBy(col ...string) *UpdateBuilder {
 //	ub.OrderByAsc("name").OrderByDesc("id")
 //	// Generates: ORDER BY name ASC, id DESC
 func (ub *UpdateBuilder) OrderByAsc(col string) *UpdateBuilder {
-	ub.orderByCols = append(ub.orderByCols, col+" ASC")
-	ub.marker = updateMarkerAfterOrderBy
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // OrderByDesc sets a column of ORDER BY in UPDATE with DESC order.
@@ -245,192 +181,67 @@ func (ub *UpdateBuilder) OrderByAsc(col string) *UpdateBuilder {
 //	ub.OrderByDesc("id").OrderByAsc("name")
 //	// Generates: ORDER BY id DESC, name ASC
 func (ub *UpdateBuilder) OrderByDesc(col string) *UpdateBuilder {
-	ub.orderByCols = append(ub.orderByCols, col+" DESC")
-	ub.marker = updateMarkerAfterOrderBy
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Asc sets order of ORDER BY to ASC.
 //
 // Deprecated: Use OrderByAsc instead. Asc only supports a single direction for all ORDER BY columns.
-func (ub *UpdateBuilder) Asc() *UpdateBuilder {
-	ub.order = "ASC"
-	ub.marker = updateMarkerAfterOrderBy
-	return ub
-}
+func (ub *UpdateBuilder) Asc() *UpdateBuilder { _ = "STUB: not implemented"; return nil }
 
 // Desc sets order of ORDER BY to DESC.
 //
 // Deprecated: Use OrderByDesc instead. Desc only supports a single direction for all ORDER BY columns.
-func (ub *UpdateBuilder) Desc() *UpdateBuilder {
-	ub.order = "DESC"
-	ub.marker = updateMarkerAfterOrderBy
-	return ub
-}
+func (ub *UpdateBuilder) Desc() *UpdateBuilder { _ = "STUB: not implemented"; return nil }
 
 // Limit sets the LIMIT in UPDATE.
-func (ub *UpdateBuilder) Limit(limit int) *UpdateBuilder {
-	if limit < 0 {
-		ub.limitVar = ""
-		return ub
-	}
-
-	ub.limitVar = ub.Var(limit)
-	ub.marker = updateMarkerAfterLimit
-	return ub
-}
+func (ub *UpdateBuilder) Limit(limit int) *UpdateBuilder { _ = "STUB: not implemented"; return nil }
 
 // Returning sets returning columns.
 // For DBMS that doesn't support RETURNING, e.g. MySQL, it will be ignored.
 func (ub *UpdateBuilder) Returning(col ...string) *UpdateBuilder {
-	ub.returning = col
-	ub.marker = updateMarkerAfterReturning
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // NumAssignment returns the number of assignments to update.
-func (ub *UpdateBuilder) NumAssignment() int {
-	return len(ub.assignments)
-}
+func (ub *UpdateBuilder) NumAssignment() int { _ = "STUB: not implemented"; return 0 }
 
 // String returns the compiled UPDATE string.
-func (ub *UpdateBuilder) String() string {
-	s, _ := ub.Build()
-	return s
-}
+func (ub *UpdateBuilder) String() string { _ = "STUB: not implemented"; return "" }
 
 // Build returns compiled UPDATE string and args.
 // They can be used in `DB#Query` of package `database/sql` directly.
 func (ub *UpdateBuilder) Build() (sql string, args []interface{}) {
-	return ub.BuildWithFlavor(ub.args.Flavor)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // BuildWithFlavor returns compiled UPDATE string and args with flavor and initial args.
 // They can be used in `DB#Query` of package `database/sql` directly.
 func (ub *UpdateBuilder) BuildWithFlavor(flavor Flavor, initialArg ...interface{}) (sql string, args []interface{}) {
-	buf := newStringBuilder()
-	ub.injection.WriteTo(buf, updateMarkerInit)
-
-	if ub.cteBuilder != nil {
-		buf.WriteLeadingString(ub.cteBuilderVar)
-		ub.injection.WriteTo(buf, updateMarkerAfterWith)
-	}
-
-	switch flavor {
-	case MySQL:
-		// CTE table names should be written after UPDATE keyword in MySQL.
-		tableNames := ub.TableNames()
-
-		if len(tableNames) > 0 {
-			buf.WriteLeadingString("UPDATE ")
-			buf.WriteStrings(tableNames, ", ")
-		}
-
-	default:
-		if len(ub.tables) > 0 {
-			buf.WriteLeadingString("UPDATE ")
-			buf.WriteStrings(ub.tables, ", ")
-		}
-	}
-
-	ub.injection.WriteTo(buf, updateMarkerAfterUpdate)
-
-	if assignments := filterEmptyStrings(ub.assignments); len(assignments) > 0 {
-		buf.WriteLeadingString("SET ")
-		buf.WriteStrings(assignments, ", ")
-	}
-
-	ub.injection.WriteTo(buf, updateMarkerAfterSet)
-
-	if flavor == SQLServer {
-		if len(ub.returning) > 0 {
-			buf.WriteLeadingString("OUTPUT ")
-			buf.WriteStringsPrefixed("INSERTED.", ub.returning, ", ")
-		}
-
-		ub.injection.WriteTo(buf, updateMarkerAfterReturning)
-	}
-
-	if flavor != MySQL {
-		// For ISO SQL, CTE table names should be written after FROM keyword.
-		if ub.cteBuilder != nil {
-			cteTableNames := ub.cteBuilder.tableNamesForFrom()
-
-			if len(cteTableNames) > 0 {
-				buf.WriteLeadingString("FROM ")
-				buf.WriteStrings(cteTableNames, ", ")
-			}
-		}
-	}
-
-	if flavor == PostgreSQL || flavor == SQLite || flavor == SQLServer {
-		if len(ub.fromTables) > 0 {
-
-			if ub.cteBuilder == nil || len(ub.cteBuilder.tableNamesForFrom()) == 0 {
-				buf.WriteLeadingString("FROM ")
-			} else {
-				buf.WriteString(", ")
-			}
-
-			buf.WriteStrings(ub.fromTables, ", ")
-			ub.injection.WriteTo(buf, updateMarkerAfterFrom)
-		}
-	}
-
-	if ub.WhereClause != nil {
-		ub.whereClauseProxy.WhereClause = ub.WhereClause
-		defer func() {
-			ub.whereClauseProxy.WhereClause = nil
-		}()
-
-		buf.WriteLeadingString(ub.whereClauseExpr)
-		ub.injection.WriteTo(buf, updateMarkerAfterWhere)
-	}
-
-	if len(ub.orderByCols) > 0 {
-		buf.WriteLeadingString("ORDER BY ")
-		buf.WriteStrings(ub.orderByCols, ", ")
-
-		if ub.order != "" {
-			buf.WriteLeadingString(ub.order)
-		}
-
-		ub.injection.WriteTo(buf, updateMarkerAfterOrderBy)
-	}
-
-	if len(ub.limitVar) > 0 {
-		buf.WriteLeadingString("LIMIT ")
-		buf.WriteString(ub.limitVar)
-
-		ub.injection.WriteTo(buf, updateMarkerAfterLimit)
-	}
-
-	if flavor == PostgreSQL || flavor == SQLite {
-		if len(ub.returning) > 0 {
-			buf.WriteLeadingString("RETURNING ")
-			buf.WriteStrings(ub.returning, ", ")
-		}
-
-		ub.injection.WriteTo(buf, updateMarkerAfterReturning)
-	}
-
-	return ub.args.CompileWithFlavor(buf.String(), flavor, initialArg...)
+	_ = "STUB: not implemented"
+	return "", nil
 }
+
+// CTE table names should be written after UPDATE keyword in MySQL.
+
+// For ISO SQL, CTE table names should be written after FROM keyword.
 
 // SetFlavor sets the flavor of compiled sql.
 func (ub *UpdateBuilder) SetFlavor(flavor Flavor) (old Flavor) {
-	old = ub.args.Flavor
-	ub.args.Flavor = flavor
-	return
+	_ = "STUB: not implemented"
+	return *new(Flavor)
 }
 
 // Flavor returns flavor of builder
 func (ub *UpdateBuilder) Flavor() Flavor {
-	return ub.args.Flavor
+	_ = "STUB: not implemented"
+	return *
+
+	// SQL adds an arbitrary sql to current position.
+	new(Flavor)
 }
 
-// SQL adds an arbitrary sql to current position.
-func (ub *UpdateBuilder) SQL(sql string) *UpdateBuilder {
-	ub.injection.SQL(ub.marker, sql)
-	return ub
-}
+func (ub *UpdateBuilder) SQL(sql string) *UpdateBuilder { _ = "STUB: not implemented"; return nil }

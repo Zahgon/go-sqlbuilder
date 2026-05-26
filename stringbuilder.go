@@ -14,100 +14,35 @@ type stringBuilder struct {
 
 var _ io.Writer = new(stringBuilder)
 
-func newStringBuilder() *stringBuilder {
-	return &stringBuilder{
-		builder: &strings.Builder{},
-	}
-}
+func newStringBuilder() *stringBuilder { _ = "STUB: not implemented"; return nil }
 
 // WriteLeadingString writes s to internal buffer.
 // If it's not the first time to write the string, a blank (" ") will be written before s.
-func (sb *stringBuilder) WriteLeadingString(s string) {
-	if sb.builder.Len() > 0 {
-		sb.builder.WriteString(" ")
-	}
+func (sb *stringBuilder) WriteLeadingString(s string) { _ = "STUB: not implemented"; return }
 
-	sb.builder.WriteString(s)
-}
+func (sb *stringBuilder) WriteString(s string) { _ = "STUB: not implemented"; return }
 
-func (sb *stringBuilder) WriteString(s string) {
-	sb.builder.WriteString(s)
-}
-
-func (sb *stringBuilder) WriteStrings(ss []string, sep string) {
-	if len(ss) == 0 {
-		return
-	}
-
-	firstAdded := false
-	if len(ss[0]) != 0 {
-		sb.WriteString(ss[0])
-		firstAdded = true
-	}
-
-	for _, s := range ss[1:] {
-		if len(s) != 0 {
-			if firstAdded {
-				sb.WriteString(sep)
-			}
-			sb.WriteString(s)
-			firstAdded = true
-		}
-	}
-}
+func (sb *stringBuilder) WriteStrings(ss []string, sep string) { _ = "STUB: not implemented"; return }
 
 func (sb *stringBuilder) WriteStringsPrefixed(prefix string, ss []string, sep string) {
-	prefixedSs := []string{}
-
-	for _, s := range ss {
-		prefixedSs = append(prefixedSs, prefix+s)
-	}
-
-	sb.WriteStrings(prefixedSs, sep)
+	_ = "STUB: not implemented"
+	return
 }
 
-func (sb *stringBuilder) WriteRune(r rune) {
-	sb.builder.WriteRune(r)
-}
+func (sb *stringBuilder) WriteRune(r rune) { _ = "STUB: not implemented"; return }
 
-func (sb *stringBuilder) Write(data []byte) (int, error) {
-	return sb.builder.Write(data)
-}
+func (sb *stringBuilder) Write(data []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (sb *stringBuilder) String() string {
-	return sb.builder.String()
-}
+func (sb *stringBuilder) String() string { _ = "STUB: not implemented"; return "" }
 
-func (sb *stringBuilder) Reset() {
-	sb.builder.Reset()
-}
+func (sb *stringBuilder) Reset() { _ = "STUB: not implemented"; return }
 
 func (sb *stringBuilder) Grow(n int) {
-	sb.builder.Grow(n)
+	_ = "STUB: not implemented"
+
+	// filterEmptyStrings removes empty strings from ss.
+	// As ss rarely contains empty strings, filterEmptyStrings tries to avoid allocation if possible.
+	return
 }
 
-// filterEmptyStrings removes empty strings from ss.
-// As ss rarely contains empty strings, filterEmptyStrings tries to avoid allocation if possible.
-func filterEmptyStrings(ss []string) []string {
-	emptyStrings := 0
-
-	for _, s := range ss {
-		if len(s) == 0 {
-			emptyStrings++
-		}
-	}
-
-	if emptyStrings == 0 {
-		return ss
-	}
-
-	filtered := make([]string, 0, len(ss)-emptyStrings)
-
-	for _, s := range ss {
-		if len(s) != 0 {
-			filtered = append(filtered, s)
-		}
-	}
-
-	return filtered
-}
+func filterEmptyStrings(ss []string) []string { _ = "STUB: not implemented"; return nil }

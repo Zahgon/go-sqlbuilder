@@ -3,10 +3,6 @@
 
 package sqlbuilder
 
-import (
-	"fmt"
-)
-
 // Builder is a general SQL builder.
 // It's used by Args to create nested SQL like the `IN` expression in
 // `SELECT * FROM t1 WHERE id IN (SELECT id FROM t2)`.
@@ -24,18 +20,18 @@ type compiledBuilder struct {
 var _ Builder = new(compiledBuilder)
 
 func (cb *compiledBuilder) Build() (sql string, args []interface{}) {
-	return cb.args.Compile(cb.format)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 func (cb *compiledBuilder) BuildWithFlavor(flavor Flavor, initialArg ...interface{}) (sql string, args []interface{}) {
-	return cb.args.CompileWithFlavor(cb.format, flavor, initialArg...)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // Flavor returns flavor of builder
 // Always returns DefaultFlavor
-func (cb *compiledBuilder) Flavor() Flavor {
-	return cb.args.Flavor
-}
+func (cb *compiledBuilder) Flavor() Flavor { _ = "STUB: not implemented"; return *new(Flavor) }
 
 type flavoredBuilder struct {
 	builder Builder
@@ -43,77 +39,47 @@ type flavoredBuilder struct {
 }
 
 func (fb *flavoredBuilder) Build() (sql string, args []interface{}) {
-	return fb.builder.BuildWithFlavor(fb.flavor)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 func (fb *flavoredBuilder) BuildWithFlavor(flavor Flavor, initialArg ...interface{}) (sql string, args []interface{}) {
-	return fb.builder.BuildWithFlavor(flavor, initialArg...)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // Flavor returns flavor of builder
 func (fb *flavoredBuilder) Flavor() Flavor {
-	return fb.flavor
+	_ = "STUB: not implemented"
+
+	// WithFlavor creates a new Builder based on builder with a default flavor.
+	return *new(Flavor)
 }
 
-// WithFlavor creates a new Builder based on builder with a default flavor.
 func WithFlavor(builder Builder, flavor Flavor) Builder {
-	return &flavoredBuilder{
-		builder: builder,
-		flavor:  flavor,
-	}
+	_ = "STUB: not implemented"
+	return *new(Builder)
 }
 
 // Buildf creates a Builder from a format string using `fmt.Sprintf`-like syntax.
 // As all arguments will be converted to a string internally, e.g. "$0",
 // only `%v` and `%s` are valid.
 func Buildf(format string, arg ...interface{}) Builder {
-	args := &Args{
-		Flavor: DefaultFlavor,
-	}
-	vars := make([]interface{}, 0, len(arg))
-
-	for _, a := range arg {
-		vars = append(vars, args.Add(a))
-	}
-
-	return &compiledBuilder{
-		args:   args,
-		format: fmt.Sprintf(Escape(format), vars...),
-	}
+	_ = "STUB: not implemented"
+	return *new(Builder)
 }
 
 // Build creates a Builder from a format string.
 // The format string uses special syntax to represent arguments.
 // See doc in `Args#Compile` for syntax details.
 func Build(format string, arg ...interface{}) Builder {
-	args := &Args{
-		Flavor: DefaultFlavor,
-	}
-
-	for _, a := range arg {
-		args.Add(a)
-	}
-
-	return &compiledBuilder{
-		args:   args,
-		format: format,
-	}
+	_ = "STUB: not implemented"
+	return *new(Builder)
 }
 
 // BuildNamed creates a Builder from a format string.
 // The format string uses `${key}` to refer the value of named by key.
 func BuildNamed(format string, named map[string]interface{}) Builder {
-	args := &Args{
-		Flavor:    DefaultFlavor,
-		onlyNamed: true,
-	}
-
-	for n, v := range named {
-		args.Add(Named(n, v))
-	}
-
-	return &compiledBuilder{
-		args:   args,
-		format: format,
-	}
+	_ = "STUB: not implemented"
+	return *new(Builder)
 }

@@ -15,27 +15,16 @@ const (
 )
 
 // With creates a new CTE builder with default flavor.
-func With(tables ...*CTEQueryBuilder) *CTEBuilder {
-	return DefaultFlavor.NewCTEBuilder().With(tables...)
-}
+func With(tables ...*CTEQueryBuilder) *CTEBuilder { _ = "STUB: not implemented"; return nil }
 
 // WithRecursive creates a new recursive CTE builder with default flavor.
-func WithRecursive(tables ...*CTEQueryBuilder) *CTEBuilder {
-	return DefaultFlavor.NewCTEBuilder().WithRecursive(tables...)
-}
+func WithRecursive(tables ...*CTEQueryBuilder) *CTEBuilder { _ = "STUB: not implemented"; return nil }
 
-func newCTEBuilder() *CTEBuilder {
-	return &CTEBuilder{
-		args:      &Args{},
-		injection: newInjection(),
-	}
-}
+func newCTEBuilder() *CTEBuilder { _ = "STUB: not implemented"; return nil }
 
 // Clone returns a deep copy of CTEBuilder.
 // It's useful when you want to create a base builder and clone it to build similar queries.
-func (cteb *CTEBuilder) Clone() *CTEBuilder {
-	return clone.Clone(cteb).(*CTEBuilder)
-}
+func (cteb *CTEBuilder) Clone() *CTEBuilder { _ = "STUB: not implemented"; return nil }
 
 func init() {
 	t := reflect.TypeOf(CTEBuilder{})
@@ -66,127 +55,69 @@ var _ Builder = new(CTEBuilder)
 
 // With sets the CTE name and columns.
 func (cteb *CTEBuilder) With(queries ...*CTEQueryBuilder) *CTEBuilder {
-	queryBuilderVars := make([]string, 0, len(queries))
-
-	for _, query := range queries {
-		queryBuilderVars = append(queryBuilderVars, cteb.args.Add(query))
-	}
-
-	cteb.queries = append([]*CTEQueryBuilder(nil), queries...)
-	cteb.queryBuilderVars = queryBuilderVars
-	cteb.marker = cteMarkerAfterWith
-	return cteb
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // WithRecursive sets the CTE name and columns and turns on the RECURSIVE keyword.
 func (cteb *CTEBuilder) WithRecursive(queries ...*CTEQueryBuilder) *CTEBuilder {
-	cteb.With(queries...).recursive = true
-	return cteb
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Select creates a new SelectBuilder to build a SELECT statement using this CTE.
-func (cteb *CTEBuilder) Select(col ...string) *SelectBuilder {
-	sb := cteb.args.Flavor.NewSelectBuilder()
-	return sb.With(cteb).Select(col...)
-}
+func (cteb *CTEBuilder) Select(col ...string) *SelectBuilder { _ = "STUB: not implemented"; return nil }
 
 // DeleteFrom creates a new DeleteBuilder to build a DELETE statement using this CTE.
 func (cteb *CTEBuilder) DeleteFrom(table string) *DeleteBuilder {
-	db := cteb.args.Flavor.NewDeleteBuilder()
-	return db.With(cteb).DeleteFrom(table)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Update creates a new UpdateBuilder to build an UPDATE statement using this CTE.
-func (cteb *CTEBuilder) Update(table string) *UpdateBuilder {
-	ub := cteb.args.Flavor.NewUpdateBuilder()
-	return ub.With(cteb).Update(table)
-}
+func (cteb *CTEBuilder) Update(table string) *UpdateBuilder { _ = "STUB: not implemented"; return nil }
 
 // String returns the compiled CTE string.
-func (cteb *CTEBuilder) String() string {
-	sql, _ := cteb.Build()
-	return sql
-}
+func (cteb *CTEBuilder) String() string { _ = "STUB: not implemented"; return "" }
 
 // Build returns compiled CTE string and args.
 func (cteb *CTEBuilder) Build() (sql string, args []interface{}) {
-	return cteb.BuildWithFlavor(cteb.args.Flavor)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // BuildWithFlavor builds a CTE with the specified flavor and initial arguments.
 func (cteb *CTEBuilder) BuildWithFlavor(flavor Flavor, initialArg ...interface{}) (sql string, args []interface{}) {
-	buf := newStringBuilder()
-	cteb.injection.WriteTo(buf, cteMarkerInit)
-
-	if len(cteb.queryBuilderVars) > 0 {
-		buf.WriteLeadingString("WITH ")
-		if cteb.recursive {
-			buf.WriteString("RECURSIVE ")
-		}
-		buf.WriteStrings(cteb.queryBuilderVars, ", ")
-	}
-
-	cteb.injection.WriteTo(buf, cteMarkerAfterWith)
-	return cteb.args.CompileWithFlavor(buf.String(), flavor, initialArg...)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // SetFlavor sets the flavor of compiled sql.
 func (cteb *CTEBuilder) SetFlavor(flavor Flavor) (old Flavor) {
-	old = cteb.args.Flavor
-	cteb.args.Flavor = flavor
-	return
+	_ = "STUB: not implemented"
+	return *new(Flavor)
 }
 
 // Flavor returns flavor of builder
 func (cteb *CTEBuilder) Flavor() Flavor {
-	return cteb.args.Flavor
+	_ = "STUB: not implemented"
+	return *
+
+	// SQL adds an arbitrary sql to current position.
+	new(Flavor)
 }
 
-// SQL adds an arbitrary sql to current position.
-func (cteb *CTEBuilder) SQL(sql string) *CTEBuilder {
-	cteb.injection.SQL(cteb.marker, sql)
-	return cteb
-}
+func (cteb *CTEBuilder) SQL(sql string) *CTEBuilder { _ = "STUB: not implemented"; return nil }
 
 // TableNames returns all table names in a CTE.
-func (cteb *CTEBuilder) TableNames() []string {
-	if len(cteb.queryBuilderVars) == 0 {
-		return nil
-	}
-
-	tableNames := make([]string, 0, len(cteb.queries))
-
-	for _, query := range cteb.queries {
-		tableNames = append(tableNames, query.TableName())
-	}
-
-	return tableNames
-}
+func (cteb *CTEBuilder) TableNames() []string { _ = "STUB: not implemented"; return nil }
 
 // tableNamesForFrom returns a list of table names which should be automatically added to FROM clause.
 // It's not public, as this feature is designed only for SelectBuilder/UpdateBuilder/DeleteBuilder right now.
 func (cteb *CTEBuilder) tableNamesForFrom() []string {
-	cnt := 0
+	_ = "STUB: not implemented"
 
 	// ShouldAddToTableList() unlikely returns true.
 	// Count it before allocating any memory for better performance.
-	for _, query := range cteb.queries {
-		if query.ShouldAddToTableList() {
-			cnt++
-		}
-	}
-
-	if cnt == 0 {
-		return nil
-	}
-
-	tableNames := make([]string, 0, cnt)
-
-	for _, query := range cteb.queries {
-		if query.ShouldAddToTableList() {
-			tableNames = append(tableNames, query.TableName())
-		}
-	}
-
-	return tableNames
+	return nil
 }

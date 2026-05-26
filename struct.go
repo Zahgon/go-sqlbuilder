@@ -5,11 +5,8 @@ package sqlbuilder
 
 import (
 	"database/sql/driver"
-	"math"
 	"reflect"
 	"regexp"
-	"sort"
-	"strings"
 )
 
 var (
@@ -66,39 +63,17 @@ var emptyStruct Struct
 // NewStruct analyzes type information in structValue
 // and creates a new Struct with all structValue fields.
 // If structValue is not a struct, NewStruct returns a dummy Struct.
-func NewStruct(structValue interface{}) *Struct {
-	t := reflect.TypeOf(structValue)
-	t = dereferencedType(t)
-
-	if t.Kind() != reflect.Struct {
-		return &emptyStruct
-	}
-
-	return &Struct{
-		Flavor:             DefaultFlavor,
-		structType:         t,
-		structFieldsParser: makeDefaultFieldsParser(t),
-	}
-}
+func NewStruct(structValue interface{}) *Struct { _ = "STUB: not implemented"; return nil }
 
 // For sets the default flavor of s and returns a shadow copy of s.
 // The original s.Flavor is not changed.
-func (s *Struct) For(flavor Flavor) *Struct {
-	c := *s
-	c.Flavor = flavor
-	return &c
-}
+func (s *Struct) For(flavor Flavor) *Struct { _ = "STUB: not implemented"; return nil }
 
 // WithFieldMapper returns a new Struct based on s with custom field mapper.
 // The original s is not changed.
 func (s *Struct) WithFieldMapper(mapper FieldMapperFunc) *Struct {
-	if s.structType == nil {
-		return &emptyStruct
-	}
-
-	c := *s
-	c.structFieldsParser = makeCustomFieldsParser(s.structType, mapper)
-	return &c
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // WithTag sets included tag(s) for all builder methods.
@@ -106,189 +81,38 @@ func (s *Struct) WithFieldMapper(mapper FieldMapperFunc) *Struct {
 //
 // If multiple tags are provided, fields tagged with any of them are included.
 // That is, s.WithTag("tag1", "tag2").SelectFrom("t") is to select all fields tagged with "tag1" or "tag2" from table "t".
-func (s *Struct) WithTag(tags ...string) *Struct {
-	if len(tags) == 0 {
-		return s
-	}
+func (s *Struct) WithTag(tags ...string) *Struct { _ = "STUB: not implemented"; return nil }
 
-	c := *s
-	c.mergeWithTags(tags)
-	return &c
-}
+func (s *Struct) mergeWithTags(with []string) { _ = "STUB: not implemented"; return }
 
-func (s *Struct) mergeWithTags(with []string) {
-	newTags := make([]int, 0, len(with))
-	withTags := s.withTags
-	withoutTags := s.withoutTags
-
-	if len(withoutTags) == 0 {
-		for i, tag := range with {
-			if tag == "" {
-				continue
-			}
-
-			if !hasTag(withTags, tag) {
-				newTags = append(newTags, i)
-			}
-		}
-	} else {
-		for i, tag := range with {
-			if tag == "" {
-				continue
-			}
-
-			if !hasTag(withTags, tag) {
-				if !hasTag(withoutTags, tag) {
-					newTags = append(newTags, i)
-				}
-			}
-		}
-	}
-
-	if len(newTags) == 0 {
-		return
-	}
-
-	// Merge with tags.
-	withTags = make([]string, 0, len(s.withTags)+len(newTags))
-	withTags = append(withTags, s.withTags...)
-
-	for _, idx := range newTags {
-		withTags = append(withTags, with[idx])
-	}
-
-	sort.Strings(withTags)
-	withTags = removeDuplicatedTags(withTags)
-	s.withTags = withTags
-}
+// Merge with tags.
 
 // WithoutTag sets excluded tag(s) for all builder methods.
 // For instance, calling s.WithoutTag("tag").SelectFrom("t") is to select all fields except those tagged with "tag" from table "t".
 //
 // If multiple tags are provided, fields tagged with any of them are excluded.
 // That is, s.WithoutTag("tag1", "tag2").SelectFrom("t") is to exclude any field tagged with "tag1" or "tag2" from table "t".
-func (s *Struct) WithoutTag(tags ...string) *Struct {
-	if len(tags) == 0 {
-		return s
-	}
+func (s *Struct) WithoutTag(tags ...string) *Struct { _ = "STUB: not implemented"; return nil }
 
-	c := *s
-	c.mergeWithoutTags(tags)
-	return &c
-}
+func (s *Struct) mergeWithoutTags(without []string) { _ = "STUB: not implemented"; return }
 
-func (s *Struct) mergeWithoutTags(without []string) {
-	withTags := s.withTags
-	withoutTags := s.withoutTags
+// Merge without tags.
 
-	if len(withoutTags) == 0 {
-		withoutTags = make([]string, len(without))
-		copy(withoutTags, without)
-	} else {
-		newTags := make([]int, 0, len(without))
+// Filter out useless tags in s.withTags.
 
-		for i, tag := range without {
-			if tag == "" {
-				continue
-			}
+// Update with and without tags.
 
-			if !hasTag(withoutTags, tag) {
-				newTags = append(newTags, i)
-			}
-		}
+func hasTag(tags []string, tag string) bool { _ = "STUB: not implemented"; return false }
 
-		if len(newTags) == 0 {
-			return
+func removeDuplicatedTags(tags []string) []string { _ = "STUB: not implemented"; return nil }
 
-		}
-
-		// Merge without tags.
-		tags := make([]string, 0, len(withoutTags)+len(newTags))
-		tags = append(tags, withoutTags...)
-
-		for _, idx := range newTags {
-			tags = append(tags, without[idx])
-		}
-
-		withoutTags = tags
-	}
-
-	sort.Strings(withoutTags)
-	withoutTags = removeDuplicatedTags(withoutTags)
-
-	// Filter out useless tags in s.withTags.
-	kept := make([]int, 0, len(withTags))
-
-	for i, tag := range withTags {
-		if !hasTag(withoutTags, tag) {
-			kept = append(kept, i)
-		}
-	}
-
-	if len(kept) > 0 {
-		filteredTags := make([]string, 0, len(kept))
-
-		for _, i := range kept {
-			filteredTags = append(filteredTags, withTags[i])
-		}
-
-		withTags = filteredTags
-	} else {
-		withTags = nil
-	}
-
-	// Update with and without tags.
-	s.withTags = withTags
-	s.withoutTags = withoutTags
-}
-
-func hasTag(tags []string, tag string) bool {
-	if len(tags) == 0 {
-		return false
-	}
-
-	i := sort.SearchStrings(tags, tag)
-	return i < len(tags) && tags[i] == tag
-}
-
-func removeDuplicatedTags(tags []string) []string {
-	if len(tags) <= 1 {
-		return tags
-	}
-
-	// Unlikely to find any duplicates.
-	hasDupes := false
-
-	for i := 1; i < len(tags); i++ {
-		if tags[i] == tags[i-1] {
-			hasDupes = true
-			break
-		}
-	}
-
-	if !hasDupes {
-		return tags
-	}
-
-	unique := make([]string, 0, len(tags))
-	unique = append(unique, tags[0])
-
-	for i := 1; i < len(tags); i++ {
-		if tags[i] != tags[i-1] {
-			unique = append(unique, tags[i])
-		}
-	}
-
-	return unique
-}
+// Unlikely to find any duplicates.
 
 // SelectFrom creates a new `SelectBuilder` with table name.
 // By default, all exported fields of the s are listed as columns in SELECT.
 //
 // Caller is responsible to set WHERE condition to find right record.
-func (s *Struct) SelectFrom(table string) *SelectBuilder {
-	return s.selectFromWithTags(table, s.withTags, s.withoutTags)
-}
+func (s *Struct) SelectFrom(table string) *SelectBuilder { _ = "STUB: not implemented"; return nil }
 
 // SelectFromForTag creates a new `SelectBuilder` with table name for a specified tag.
 // By default, all fields of the s tagged with tag are listed as columns in SELECT.
@@ -298,49 +122,16 @@ func (s *Struct) SelectFrom(table string) *SelectBuilder {
 // Deprecated: It's recommended to use s.WithTag(tag).SelectFrom(...) instead of calling this method.
 // The former one is more readable and can be chained with other methods.
 func (s *Struct) SelectFromForTag(table string, tag string) (sb *SelectBuilder) {
-	return s.selectFromWithTags(table, []string{tag}, nil)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (s *Struct) selectFromWithTags(table string, with, without []string) (sb *SelectBuilder) {
-	sfs := s.structFieldsParser()
-	tagged := sfs.FilterTags(with, without)
-
-	sb = s.Flavor.NewSelectBuilder()
-	sb.From(table)
-
-	if tagged == nil {
-		sb.Select("*")
-		return
-	}
-
-	buf := newStringBuilder()
-	cols := make([]string, 0, len(tagged.ForRead))
-	tableAlias := parseTableAlias(table)
-
-	for _, sf := range tagged.ForRead {
-		if s.Flavor != CQL && !strings.ContainsRune(sf.Alias, '.') {
-			buf.WriteString(tableAlias)
-			buf.WriteRune('.')
-		}
-		buf.WriteString(sf.NameForSelect(s.Flavor))
-
-		cols = append(cols, buf.String())
-		buf.Reset()
-	}
-
-	sb.Select(cols...)
-	return sb
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func parseTableAlias(table string) string {
-	idx := strings.LastIndex(table, " ")
-
-	if idx == -1 {
-		return table
-	}
-
-	return table[idx+1:]
-}
+func parseTableAlias(table string) string { _ = "STUB: not implemented"; return "" }
 
 // Update creates a new `UpdateBuilder` with table name.
 // By default, all exported fields of the s is assigned in UPDATE with the field values from value.
@@ -348,7 +139,8 @@ func parseTableAlias(table string) string {
 //
 // Caller is responsible to set WHERE condition to match right record.
 func (s *Struct) Update(table string, value interface{}) *UpdateBuilder {
-	return s.updateWithTags(table, s.withTags, s.withoutTags, value)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // UpdateForTag creates a new `UpdateBuilder` with table name.
@@ -360,58 +152,13 @@ func (s *Struct) Update(table string, value interface{}) *UpdateBuilder {
 // Deprecated: It's recommended to use s.WithTag(tag).Update(...) instead of calling this method.
 // The former one is more readable and can be chained with other methods.
 func (s *Struct) UpdateForTag(table string, tag string, value interface{}) *UpdateBuilder {
-	return s.updateWithTags(table, []string{tag}, nil, value)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (s *Struct) updateWithTags(table string, with, without []string, value interface{}) *UpdateBuilder {
-	sfs := s.structFieldsParser()
-	tagged := sfs.FilterTags(with, without)
-
-	ub := s.Flavor.NewUpdateBuilder()
-	ub.Update(table)
-
-	if tagged == nil {
-		return ub
-	}
-
-	v := reflect.ValueOf(value)
-	v = dereferencedValue(v)
-
-	if v.Type() != s.structType {
-		return ub
-	}
-
-	assignments := make([]string, 0, len(tagged.ForWrite))
-
-	for _, sf := range tagged.ForWrite {
-		val, ok := fieldByIndex(v, sf.Index, false)
-
-		if !ok || !val.IsValid() {
-			if sf.ShouldOmitEmpty(with...) {
-				continue
-			}
-
-			assignments = append(assignments, ub.Assign(sf.Quote(s.Flavor), nil))
-			continue
-		}
-
-		if isEmptyValue(val) {
-			if sf.ShouldOmitEmpty(with...) {
-				continue
-			}
-		} else {
-			val = dereferencedFieldValue(val)
-		}
-
-		var data interface{}
-		if val.IsValid() {
-			data = val.Interface()
-		}
-		assignments = append(assignments, ub.Assign(sf.Quote(s.Flavor), data))
-	}
-
-	ub.Set(assignments...)
-	return ub
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // InsertInto creates a new `InsertBuilder` with table name using verb INSERT INTO.
@@ -422,11 +169,8 @@ func (s *Struct) updateWithTags(table string, with, without []string, value inte
 // If the type of any item in value is not expected, it will be ignored.
 // If value is an empty slice, `InsertBuilder#Values` will not be called.
 func (s *Struct) InsertInto(table string, value ...interface{}) *InsertBuilder {
-	ib := s.Flavor.NewInsertBuilder()
-	ib.InsertInto(table)
-
-	s.buildColsAndValuesForTag(ib, s.withTags, s.withoutTags, value...)
-	return ib
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // InsertIgnoreInto creates a new `InsertBuilder` with table name using verb INSERT IGNORE INTO.
@@ -437,11 +181,8 @@ func (s *Struct) InsertInto(table string, value ...interface{}) *InsertBuilder {
 // If the type of any item in value is not expected, it will be ignored.
 // If value is an empty slice, `InsertBuilder#Values` will not be called.
 func (s *Struct) InsertIgnoreInto(table string, value ...interface{}) *InsertBuilder {
-	ib := s.Flavor.NewInsertBuilder()
-	ib.InsertIgnoreInto(table)
-
-	s.buildColsAndValuesForTag(ib, s.withTags, s.withoutTags, value...)
-	return ib
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // ReplaceInto creates a new `InsertBuilder` with table name using verb REPLACE INTO.
@@ -452,94 +193,20 @@ func (s *Struct) InsertIgnoreInto(table string, value ...interface{}) *InsertBui
 // If the type of any item in value is not expected, it will be ignored.
 // If value is an empty slice, `InsertBuilder#Values` will not be called.
 func (s *Struct) ReplaceInto(table string, value ...interface{}) *InsertBuilder {
-	ib := s.Flavor.NewInsertBuilder()
-	ib.ReplaceInto(table)
-
-	s.buildColsAndValuesForTag(ib, s.withTags, s.withoutTags, value...)
-	return ib
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // buildColsAndValuesForTag uses ib to set exported fields tagged with tag as columns
 // and add value as a list of values.
 func (s *Struct) buildColsAndValuesForTag(ib *InsertBuilder, with, without []string, value ...interface{}) {
-	sfs := s.structFieldsParser()
-	tagged := sfs.FilterTags(with, without)
-
-	if tagged == nil {
-		return
-	}
-
-	vs := make([]reflect.Value, 0, len(value))
-
-	for _, item := range value {
-		v := reflect.ValueOf(item)
-		v = dereferencedFieldValue(v)
-
-		if v.Type() == s.structType {
-			vs = append(vs, v)
-		}
-	}
-
-	if len(vs) == 0 {
-		return
-	}
-
-	cols := make([]string, 0, len(tagged.ForInsert))
-	values := make([][]interface{}, len(vs))
-	nilCols := make([]int, 0, len(tagged.ForInsert))
-
-	for _, sf := range tagged.ForInsert {
-		cols = append(cols, sf.Quote(s.Flavor))
-		shouldOmitEmpty := sf.ShouldOmitEmpty(with...)
-		nilCnt := 0
-
-		for i, v := range vs {
-			val, ok := fieldByIndex(v, sf.Index, false)
-			if !ok || !val.IsValid() {
-				nilCnt++
-				values[i] = append(values[i], nil)
-				continue
-			}
-
-			if isEmptyValue(val) && shouldOmitEmpty {
-				nilCnt++
-			}
-
-			val = dereferencedFieldValue(val)
-
-			if val.IsValid() {
-				values[i] = append(values[i], val.Interface())
-			} else {
-				values[i] = append(values[i], nil)
-			}
-		}
-
-		nilCols = append(nilCols, nilCnt)
-	}
-
-	// Try to filter out nil values if possible.
-	filteredCols := make([]string, 0, len(cols))
-	filteredValues := make([][]interface{}, len(values))
-
-	for i, cnt := range nilCols {
-		// If all values are nil in a column, ignore the column completely.
-		if cnt == len(values) {
-			continue
-		}
-
-		filteredCols = append(filteredCols, cols[i])
-
-		for n, value := range values {
-			filteredValues[n] = append(filteredValues[n], value[i])
-		}
-	}
-
-	ib.Cols(filteredCols...)
-
-	for _, value := range filteredValues {
-		ib.Values(value...)
-	}
+	_ = "STUB: not implemented"
+	return
 }
+
+// Try to filter out nil values if possible.
+
+// If all values are nil in a column, ignore the column completely.
 
 // InsertIntoForTag creates a new `InsertBuilder` with table name using verb INSERT INTO.
 // By default, exported fields tagged with tag are set as columns by calling `InsertBuilder#Cols`,
@@ -552,11 +219,8 @@ func (s *Struct) buildColsAndValuesForTag(ib *InsertBuilder, with, without []str
 // Deprecated: It's recommended to use s.WithTag(tag).InsertInto(...) instead of calling this method.
 // The former one is more readable and can be chained with other methods.
 func (s *Struct) InsertIntoForTag(table string, tag string, value ...interface{}) *InsertBuilder {
-	ib := s.Flavor.NewInsertBuilder()
-	ib.InsertInto(table)
-
-	s.buildColsAndValuesForTag(ib, []string{tag}, nil, value...)
-	return ib
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // InsertIgnoreIntoForTag creates a new `InsertBuilder` with table name using verb INSERT IGNORE INTO.
@@ -570,11 +234,8 @@ func (s *Struct) InsertIntoForTag(table string, tag string, value ...interface{}
 // Deprecated: It's recommended to use s.WithTag(tag).InsertIgnoreInto(...) instead of calling this method.
 // The former one is more readable and can be chained with other methods.
 func (s *Struct) InsertIgnoreIntoForTag(table string, tag string, value ...interface{}) *InsertBuilder {
-	ib := s.Flavor.NewInsertBuilder()
-	ib.InsertIgnoreInto(table)
-
-	s.buildColsAndValuesForTag(ib, []string{tag}, nil, value...)
-	return ib
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // ReplaceIntoForTag creates a new `InsertBuilder` with table name using verb REPLACE INTO.
@@ -588,27 +249,18 @@ func (s *Struct) InsertIgnoreIntoForTag(table string, tag string, value ...inter
 // Deprecated: It's recommended to use s.WithTag(tag).ReplaceInto(...) instead of calling this method.
 // The former one is more readable and can be chained with other methods.
 func (s *Struct) ReplaceIntoForTag(table string, tag string, value ...interface{}) *InsertBuilder {
-	ib := s.Flavor.NewInsertBuilder()
-	ib.ReplaceInto(table)
-
-	s.buildColsAndValuesForTag(ib, []string{tag}, nil, value...)
-	return ib
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // DeleteFrom creates a new `DeleteBuilder` with table name.
 //
 // Caller is responsible to set WHERE condition to match right record.
-func (s *Struct) DeleteFrom(table string) *DeleteBuilder {
-	db := s.Flavor.NewDeleteBuilder()
-	db.DeleteFrom(table)
-	return db
-}
+func (s *Struct) DeleteFrom(table string) *DeleteBuilder { _ = "STUB: not implemented"; return nil }
 
 // Addr takes address of all exported fields of the s from the st.
 // The returned result can be used in `Row#Scan` directly.
-func (s *Struct) Addr(st interface{}) []interface{} {
-	return s.addrWithTags(s.withTags, s.withoutTags, st)
-}
+func (s *Struct) Addr(st interface{}) []interface{} { _ = "STUB: not implemented"; return nil }
 
 // AddrForTag takes address of all fields of the s tagged with tag from the st.
 // The returned value can be used in `Row#Scan` directly.
@@ -618,268 +270,100 @@ func (s *Struct) Addr(st interface{}) []interface{} {
 // Deprecated: It's recommended to use s.WithTag(tag).Addr(...) instead of calling this method.
 // The former one is more readable and can be chained with other methods.
 func (s *Struct) AddrForTag(tag string, st interface{}) []interface{} {
-	return s.addrWithTags([]string{tag}, nil, st)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (s *Struct) addrWithTags(with, without []string, st interface{}) []interface{} {
-	sfs := s.structFieldsParser()
-	tagged := sfs.FilterTags(with, without)
-
-	if tagged == nil {
-		return nil
-	}
-
-	return s.addrWithFields(tagged.ForRead, st)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // AddrWithCols takes address of all columns defined in cols from the st.
 // The returned value can be used in `Row#Scan` directly.
 func (s *Struct) AddrWithCols(cols []string, st interface{}) []interface{} {
-	sfs := s.structFieldsParser()
-	tagged := sfs.FilterTags(s.withTags, s.withoutTags)
-
-	if tagged == nil {
-		return nil
-	}
-
-	fields := tagged.Cols(cols)
-
-	if fields == nil {
-		return nil
-	}
-
-	return s.addrWithFields(fields, st)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (s *Struct) addrWithFields(fields []*structField, st interface{}) []interface{} {
-	v := reflect.ValueOf(st)
-	v = dereferencedValue(v)
-
-	if v.Type() != s.structType {
-		return nil
-	}
-
-	addrs := make([]interface{}, 0, len(fields))
-
-	for _, sf := range fields {
-		field, ok := fieldByIndex(v, sf.Index, true)
-		if !ok || !field.IsValid() {
-			return nil
-		}
-
-		data := field.Addr().Interface()
-		addrs = append(addrs, data)
-	}
-
-	return addrs
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Columns returns column names of s for all exported struct fields.
-func (s *Struct) Columns() []string {
-	return s.columnsWithTags(s.withTags, s.withoutTags)
-}
+func (s *Struct) Columns() []string { _ = "STUB: not implemented"; return nil }
 
 // ColumnsForTag returns column names of the s tagged with tag.
 //
 // Deprecated: It's recommended to use s.WithTag(tag).Columns(...) instead of calling this method.
 // The former one is more readable and can be chained with other methods.
-func (s *Struct) ColumnsForTag(tag string) (cols []string) {
-	return s.columnsWithTags([]string{tag}, nil)
-}
+func (s *Struct) ColumnsForTag(tag string) (cols []string) { _ = "STUB: not implemented"; return nil }
 
 func (s *Struct) columnsWithTags(with, without []string) (cols []string) {
-	sfs := s.structFieldsParser()
-	tagged := sfs.FilterTags(with, without)
-
-	if tagged == nil {
-		return
-	}
-
-	cols = make([]string, 0, len(tagged.ForWrite))
-
-	for _, sf := range tagged.ForWrite {
-		cols = append(cols, sf.Alias)
-	}
-
-	return
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Values returns a shadow copy of all exported fields in st.
-func (s *Struct) Values(st interface{}) []interface{} {
-	return s.valuesWithTags(s.withTags, s.withoutTags, st)
-}
+func (s *Struct) Values(st interface{}) []interface{} { _ = "STUB: not implemented"; return nil }
 
 // ValuesForTag returns a shadow copy of all fields tagged with tag in st.
 //
 // Deprecated: It's recommended to use s.WithTag(tag).Values(...) instead of calling this method.
 // The former one is more readable and can be chained with other methods.
 func (s *Struct) ValuesForTag(tag string, value interface{}) (values []interface{}) {
-	return s.valuesWithTags([]string{tag}, nil, value)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (s *Struct) valuesWithTags(with, without []string, value interface{}) (values []interface{}) {
-	sfs := s.structFieldsParser()
-	tagged := sfs.FilterTags(with, without)
-
-	if tagged == nil {
-		return
-	}
-
-	v := reflect.ValueOf(value)
-	v = dereferencedValue(v)
-
-	if v.Type() != s.structType {
-		return
-	}
-
-	values = make([]interface{}, 0, len(tagged.ForWrite))
-
-	for _, sf := range tagged.ForWrite {
-		field, ok := fieldByIndex(v, sf.Index, false)
-		if !ok || !field.IsValid() {
-			values = append(values, nil)
-			continue
-		}
-
-		data := field.Interface()
-		values = append(values, data)
-	}
-
-	return
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // ForeachRead foreach tags.
 func (s *Struct) ForeachRead(trans func(dbtag string, isQuoted bool, field reflect.StructField)) {
-	s.foreachReadWithTags(s.withTags, s.withoutTags, trans)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Struct) foreachReadWithTags(with, without []string, trans func(dbtag string, isQuoted bool, field reflect.StructField)) {
-	sfs := s.structFieldsParser()
-	tagged := sfs.FilterTags(with, without)
-	if tagged == nil {
-		return
-	}
-	for _, sf := range tagged.ForRead {
-		trans(sf.DBTag, sf.IsQuoted, sf.Field)
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // ForeachWrite foreach tags.
 func (s *Struct) ForeachWrite(trans func(dbtag string, isQuoted bool, field reflect.StructField)) {
-	s.foreachWriteWithTags(s.withTags, s.withoutTags, trans)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *Struct) foreachWriteWithTags(with, without []string, trans func(dbtag string, isQuoted bool, field reflect.StructField)) {
-	sfs := s.structFieldsParser()
-	tagged := sfs.FilterTags(with, without)
-	if tagged == nil {
-		return
-	}
-	for _, sf := range tagged.ForWrite {
-		trans(sf.DBTag, sf.IsQuoted, sf.Field)
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 func dereferencedType(t reflect.Type) reflect.Type {
-	for k := t.Kind(); k == reflect.Ptr || k == reflect.Interface; k = t.Kind() {
-		t = t.Elem()
-	}
-
-	return t
+	_ = "STUB: not implemented"
+	return *new(reflect.Type)
 }
 
 func dereferencedValue(v reflect.Value) reflect.Value {
-	for k := v.Kind(); k == reflect.Ptr || k == reflect.Interface; k = v.Kind() {
-		v = v.Elem()
-	}
-
-	return v
+	_ = "STUB: not implemented"
+	return *new(reflect.Value)
 }
 
 func dereferencedFieldValue(v reflect.Value) reflect.Value {
-	for k := v.Kind(); k == reflect.Ptr || k == reflect.Interface; k = v.Kind() {
-		if v.Type().Implements(typeOfSQLDriverValuer) {
-			break
-		}
-
-		if v.IsNil() {
-			return reflect.Value{}
-		}
-
-		v = v.Elem()
-	}
-
-	return v
+	_ = "STUB: not implemented"
+	return *new(reflect.Value)
 }
 
 func fieldByIndex(v reflect.Value, index []int, allocate bool) (reflect.Value, bool) {
-	field := v
-
-	for i, idx := range index {
-		for field.Kind() == reflect.Ptr || field.Kind() == reflect.Interface {
-			if field.IsNil() {
-				if !allocate || field.Kind() != reflect.Ptr {
-					return reflect.Value{}, false
-				}
-
-				field.Set(reflect.New(field.Type().Elem()))
-			}
-
-			field = field.Elem()
-		}
-
-		if field.Kind() != reflect.Struct || idx < 0 || idx >= field.NumField() {
-			return reflect.Value{}, false
-		}
-
-		field = field.Field(idx)
-
-		if i == len(index)-1 {
-			return field, true
-		}
-	}
-
-	return field, true
+	_ = "STUB: not implemented"
+	return *new(reflect.Value), false
 }
 
 // isEmptyValue checks if v is zero.
 // Following code is borrowed from `IsZero` method in `reflect.Value` since Go 1.13.
-func isEmptyValue(v reflect.Value) bool {
-	if !v.IsValid() {
-		return true
-	}
-
-	switch v.Kind() {
-	case reflect.Bool:
-		return !v.Bool()
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return v.Int() == 0
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
-		return v.Uint() == 0
-	case reflect.Float32, reflect.Float64:
-		return math.Float64bits(v.Float()) == 0
-	case reflect.Complex64, reflect.Complex128:
-		c := v.Complex()
-		return math.Float64bits(real(c)) == 0 && math.Float64bits(imag(c)) == 0
-	case reflect.Array:
-		for i := 0; i < v.Len(); i++ {
-			if !isEmptyValue(v.Index(i)) {
-				return false
-			}
-		}
-		return true
-	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice, reflect.UnsafePointer:
-		return v.IsNil()
-	case reflect.String:
-		return v.Len() == 0
-	case reflect.Struct:
-		for i := 0; i < v.NumField(); i++ {
-			if !isEmptyValue(v.Field(i)) {
-				return false
-			}
-		}
-		return true
-	}
-
-	return false
-}
+func isEmptyValue(v reflect.Value) bool { _ = "STUB: not implemented"; return false }
